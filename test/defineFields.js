@@ -1,5 +1,5 @@
 var assert = require('assert')
-var ethUtil = require('../dist/index.js')
+var vapUtil = require('../dist/index.js')
 
 describe('define', function () {
   const fields = [{
@@ -23,12 +23,12 @@ describe('define', function () {
     name: 'r',
     length: 32,
     allowLess: true,
-    default: ethUtil.zeros(32)
+    default: vapUtil.zeros(32)
   }]
 
   it('should trim zeros', function () {
     var someOb = {}
-    ethUtil.defineProperties(someOb, fields)
+    vapUtil.defineProperties(someOb, fields)
     // Define Properties
     someOb.r = '0x00004'
     assert.equal(someOb.r.toString('hex'), '04')
@@ -39,7 +39,7 @@ describe('define', function () {
 
   it('shouldn\'t allow wrong size for exact size requirements', function () {
     var someOb = {}
-    ethUtil.defineProperties(someOb, fields)
+    vapUtil.defineProperties(someOb, fields)
 
     assert.throws(function () {
       const tmp = [{
@@ -48,7 +48,7 @@ describe('define', function () {
         length: 20,
         default: Buffer.from([1, 2, 3, 4])
       }]
-      ethUtil.defineProperties(someOb, tmp)
+      vapUtil.defineProperties(someOb, tmp)
     })
   })
 
@@ -73,27 +73,27 @@ describe('define', function () {
       '0x74657374', '0x', '0x6e6f74207a65726f', '0x612076616c7565', '0x727272'
     ]
 
-    ethUtil.defineProperties(someOb, fields, data)
+    vapUtil.defineProperties(someOb, fields, data)
     assert.deepEqual(someOb.toJSON(true), expected, 'should produce the correctly labeled object')
 
     var someOb2 = {}
     var rlpEncoded = someOb.serialize().toString('hex')
-    ethUtil.defineProperties(someOb2, fields, rlpEncoded)
+    vapUtil.defineProperties(someOb2, fields, rlpEncoded)
     assert.equal(someOb2.serialize().toString('hex'), rlpEncoded, 'the constuctor should accept rlp encoded buffers')
 
     var someOb3 = {}
-    ethUtil.defineProperties(someOb3, fields, expectedArray)
+    vapUtil.defineProperties(someOb3, fields, expectedArray)
     assert.deepEqual(someOb.toJSON(), expectedArray, 'should produce the correctly object')
   })
 
   it('it should not accept invalid values in the constuctor', function () {
     var someOb = {}
     assert.throws(function () {
-      ethUtil.defineProperties(someOb, fields, 5)
+      vapUtil.defineProperties(someOb, fields, 5)
     }, 'should throw on nonsensical data')
 
     assert.throws(function () {
-      ethUtil.defineProperties(someOb, fields, Array(6))
+      vapUtil.defineProperties(someOb, fields, Array(6))
     }, 'should throw on invalid arrays')
   })
 
@@ -106,7 +106,7 @@ describe('define', function () {
       r: 'rrr'
     }
 
-    ethUtil.defineProperties(someOb, fields, data)
+    vapUtil.defineProperties(someOb, fields, data)
     assert.equal(someOb.blah.toString(), 'test')
     someOb.blah = 'lol'
     assert.equal(someOb.blah.toString(), 'lol')
@@ -117,7 +117,7 @@ describe('define', function () {
     var someOb = {}
     var data = { blah: '42' }
 
-    ethUtil.defineProperties(someOb, fields, data)
+    vapUtil.defineProperties(someOb, fields, data)
     assert.equal(someOb.blah, '42')
     assert.equal(someOb.aword, '42')
   })
