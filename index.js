@@ -1,7 +1,7 @@
 const SHA3 = require('keccakjs')
 const secp256k1 = require('secp256k1')
 const assert = require('assert')
-const rlp = require('rlp')
+const rlp = require('@vaporyjs/rlp')
 const BN = require('bn.js')
 const crypto = require('crypto')
 
@@ -60,7 +60,7 @@ exports.SHA3_RLP = new Buffer(exports.SHA3_RLP_S, 'hex')
 exports.BN = BN
 
 /**
- * [`rlp`](https://github.com/ethereumjs/rlp)
+ * [`rlp`](https://github.com/vaporyjs/rlp)
  * @var {Function}
  */
 exports.rlp = rlp
@@ -286,8 +286,8 @@ exports.rlphash = function (a) {
 }
 
 /**
- * Returns the ethereum address of a given public key.
- * Accepts "Ethereum public keys" and SEC1 encoded keys.
+ * Returns the vapory address of a given public key.
+ * Accepts "Vapory public keys" and SEC1 encoded keys.
  * @method publicToAddress
  * @param {Buffer} pubKey The two points of an uncompressed key, unless sanitize is enabled
  * @param {Boolean} sanitize Accept public keys in other formats
@@ -304,7 +304,7 @@ exports.pubToAddress = exports.publicToAddress = function (pubKey, sanitize) {
 }
 
 /**
- * Returns the ethereum public key of a given private key
+ * Returns the vapory public key of a given private key
  * @method privateToPublic
  * @param {Buffer} privateKey A private key must be 256 bits wide
  * @return {Buffer}
@@ -316,7 +316,7 @@ var privateToPublic = exports.privateToPublic = function (privateKey) {
 }
 
 /**
- * Returns the ethereum address of a given private key
+ * Returns the vapory address of a given private key
  * @method privateToAddress
  * @param {Buffer} privateKey A private key must be 256 bits wide
  * @return {Buffer}
