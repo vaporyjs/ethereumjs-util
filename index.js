@@ -60,7 +60,7 @@ exports.SHA3_RLP = new Buffer(exports.SHA3_RLP_S, 'hex')
 exports.BN = BN
 
 /**
- * [`rlp`](https://github.com/ethereumjs/rlp)
+ * [`rlp`](https://github.com/vaporyjs/rlp)
  * @var {Function}
  */
 exports.rlp = rlp
@@ -294,7 +294,7 @@ exports.isValidPrivate = function (privateKey) {
 
 /**
  * Checks if the public key satisfies the rules of the curve secp256k1
- * and the requirements of Ethereum.
+ * and the requirements of Vapory.
  * @param {Buffer} publicKey The two points of an uncompressed key, unless sanitize is enabled
  * @param {Boolean} [sanitize=false] Accept public keys in other formats
  * @return {Boolean}
@@ -313,8 +313,8 @@ exports.isValidPublic = function (publicKey, sanitize) {
 }
 
 /**
- * Returns the ethereum address of a given public key.
- * Accepts "Ethereum public keys" and SEC1 encoded keys.
+ * Returns the vapory address of a given public key.
+ * Accepts "Vapory public keys" and SEC1 encoded keys.
  * @param {Buffer} pubKey The two points of an uncompressed key, unless sanitize is enabled
  * @param {Boolean} [sanitize=false] Accept public keys in other formats
  * @return {Buffer}
@@ -330,7 +330,7 @@ exports.pubToAddress = exports.publicToAddress = function (pubKey, sanitize) {
 }
 
 /**
- * Returns the ethereum public key of a given private key
+ * Returns the vapory public key of a given private key
  * @param {Buffer} privateKey A private key must be 256 bits wide
  * @return {Buffer}
  */
@@ -341,7 +341,7 @@ var privateToPublic = exports.privateToPublic = function (privateKey) {
 }
 
 /**
- * Converts a public key to the Ethereum format.
+ * Converts a public key to the Vapory format.
  * @param {Buffer} publicKey
  * @return {Buffer}
  */
@@ -388,21 +388,21 @@ exports.ecrecover = function (msgHash, v, r, s) {
 }
 
 /**
- * Convert signature parameters into the format of `eth_sign` RPC method
+ * Convert signature parameters into the format of `vap_sign` RPC method
  * @param {Number} v
  * @param {Buffer} r
  * @param {Buffer} s
  * @return {String} sig
  */
 exports.toRpcSig = function (v, r, s) {
-  // geth (and the RPC eth_sign method) uses the 65 byte format used by Bitcoin
-  // FIXME: this might change in the future - https://github.com/ethereum/go-ethereum/issues/2053
+  // gvap (and the RPC vap_sign method) uses the 65 byte format used by Bitcoin
+  // FIXME: this might change in the future - https://github.com/vaporyco/go-vapory/issues/2053
   return exports.bufferToHex(Buffer.concat([ r, s, exports.toBuffer(v - 27) ]))
 }
 
 /**
- * Convert signature format of the `eth_sign` RPC method to signature parameters
- * NOTE: all because of a bug in geth: https://github.com/ethereum/go-ethereum/issues/2053
+ * Convert signature format of the `vap_sign` RPC method to signature parameters
+ * NOTE: all because of a bug in gvap: https://github.com/vaporyco/go-vapory/issues/2053
  * @param {String} sig
  * @return {Object}
  */
@@ -414,7 +414,7 @@ exports.fromRpcSig = function (sig) {
   }
 
   var v = sig[64]
-  // support both versions of `eth_sign` responses
+  // support both versions of `vap_sign` responses
   if (v < 27) {
     v += 27
   }
@@ -427,7 +427,7 @@ exports.fromRpcSig = function (sig) {
 }
 
 /**
- * Returns the ethereum address of a given private key
+ * Returns the vapory address of a given private key
  * @param {Buffer} privateKey A private key must be 256 bits wide
  * @return {Buffer}
  */
