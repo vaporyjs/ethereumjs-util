@@ -1,7 +1,7 @@
 const SHA3 = require('keccakjs')
 const secp256k1 = require('secp256k1')
 const assert = require('assert')
-const rlp = require('rlp')
+const rlp = require('@vaporyjs/rlp')
 const BN = require('bn.js')
 const createHash = require('create-hash')
 
@@ -27,7 +27,7 @@ exports.SHA3_NULL_S = 'c5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045
  * SHA3-256 hash of null (a ```Buffer```)
  * @var {Buffer} SHA3_NULL
  */
-exports.SHA3_NULL = new Buffer(exports.SHA3_NULL_S, 'hex')
+exports.SHA3_NULL = Buffer.from(exports.SHA3_NULL_S, 'hex')
 
 /**
  * SHA3-256 of an RLP of an empty array (a ```String```)
@@ -39,7 +39,7 @@ exports.SHA3_RLP_ARRAY_S = '1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a1
  * SHA3-256 of an RLP of an empty array (a ```Buffer```)
  * @var {Buffer} SHA3_RLP_ARRAY
  */
-exports.SHA3_RLP_ARRAY = new Buffer(exports.SHA3_RLP_ARRAY_S, 'hex')
+exports.SHA3_RLP_ARRAY = Buffer.from(exports.SHA3_RLP_ARRAY_S, 'hex')
 
 /**
  * SHA3-256 hash of the RLP of null  (a ```String```)
@@ -51,7 +51,7 @@ exports.SHA3_RLP_S = '56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e3
  * SHA3-256 hash of the RLP of null (a ```Buffer```)
  * @var {Buffer} SHA3_RLP
  */
-exports.SHA3_RLP = new Buffer(exports.SHA3_RLP_S, 'hex')
+exports.SHA3_RLP = Buffer.from(exports.SHA3_RLP_S, 'hex')
 
 /**
  * [`BN`](https://github.com/indutny/bn.js)
@@ -78,7 +78,7 @@ exports.secp256k1 = secp256k1
  * @return {Buffer}
  */
 exports.zeros = function (bytes) {
-  var buf = new Buffer(bytes)
+  const buf = Buffer.alloc(bytes)
   buf.fill(0)
   return buf
 }
@@ -93,7 +93,7 @@ exports.zeros = function (bytes) {
  * @return {Buffer|Array}
  */
 exports.setLengthLeft = exports.setLength = function (msg, length, right) {
-  var buf = exports.zeros(length)
+  const buf = exports.zeros(length)
   msg = exports.toBuffer(msg)
   if (right) {
     if (msg.length < length) {
@@ -128,10 +128,10 @@ exports.setLengthRight = function (msg, length) {
  */
 exports.unpad = exports.stripZeros = function (a) {
   a = exports.stripHexPrefix(a)
-  var first = a[0]
+  const first = a[0]
   while (a.length > 0 && first.toString() === '0') {
     a = a.slice(1)
-    first = a[0]
+    const first = a[0]
   }
   return a
 }
@@ -142,20 +142,20 @@ exports.unpad = exports.stripZeros = function (a) {
 exports.toBuffer = function (v) {
   if (!Buffer.isBuffer(v)) {
     if (Array.isArray(v)) {
-      v = new Buffer(v)
+      v = Buffer.alloc(v)
     } else if (typeof v === 'string') {
       if (exports.isHexPrefixed(v)) {
-        v = new Buffer(exports.padToEven(exports.stripHexPrefix(v)), 'hex')
+        v = Buffer.from(exports.padToEven(exports.stripHexPrefix(v)), 'hex')
       } else {
-        v = new Buffer(v)
+        v = Buffer.alloc(v)
       }
     } else if (typeof v === 'number') {
       v = exports.intToBuffer(v)
     } else if (v === null || v === undefined) {
-      v = new Buffer([])
+      v = Buffer.alloc([])
     } else if (v.toArray) {
       // converts a BN to a Buffer
-      v = new Buffer(v.toArray())
+      v = Buffer.alloc(v.toArray())
     } else {
       throw new Error('invalid type')
     }
@@ -171,9 +171,9 @@ exports.toBuffer = function (v) {
 exports.intToHex = function (i) {
   assert(i % 1 === 0, 'number is not a integer')
   assert(i >= 0, 'number must be positive')
-  var hex = i.toString(16)
+  const hex = i.toString(16)
   if (hex.length % 2) {
-    hex = '0' + hex
+    const hex = '0' + hex
   }
 
   return '0x' + hex
@@ -185,8 +185,8 @@ exports.intToHex = function (i) {
  * @return {Buffer}
  */
 exports.intToBuffer = function (i) {
-  var hex = exports.intToHex(i)
-  return new Buffer(hex.slice(2), 'hex')
+  const hex = exports.intToHex(i)
+  return Buffer.from(hex.slice(2), 'hex')
 }
 
 /**
@@ -228,7 +228,7 @@ exports.fromSigned = function (num) {
  * @return {Buffer}
  */
 exports.toUnsigned = function (num) {
-  return new Buffer(num.toTwos(256).toArray())
+  return Buffer.alloc(num.toTwos(256).toArray())
 }
 
 /**
@@ -241,11 +241,11 @@ exports.sha3 = function (a, bits) {
   a = exports.toBuffer(a)
   if (!bits) bits = 256
 
-  var h = new SHA3(bits)
+  const h = new SHA3(bits)
   if (a) {
     h.update(a)
   }
-  return new Buffer(h.digest('hex'), 'hex')
+  return Buffer.from(h.digest('hex'), 'hex')
 }
 
 /**
@@ -266,7 +266,7 @@ exports.sha256 = function (a) {
  */
 exports.ripemd160 = function (a, padded) {
   a = exports.toBuffer(a)
-  var hash = createHash('rmd160').update(a).digest()
+  const hash = createHash('rmd160').update(a).digest()
   if (padded === true) {
     return exports.setLength(hash, 32)
   } else {
@@ -302,7 +302,7 @@ exports.isValidPrivate = function (privateKey) {
 exports.isValidPublic = function (publicKey, sanitize) {
   if (publicKey.length === 64) {
     // Convert to SEC1 for secp256k1
-    return secp256k1.publicKeyVerify(Buffer.concat([ new Buffer([4]), publicKey ]))
+    return secp256k1.publicKeyVerify(Buffer.concat([ Buffer.alloc([4]), publicKey ]))
   }
 
   if (!sanitize) {
@@ -334,7 +334,7 @@ exports.pubToAddress = exports.publicToAddress = function (pubKey, sanitize) {
  * @param {Buffer} privateKey A private key must be 256 bits wide
  * @return {Buffer}
  */
-var privateToPublic = exports.privateToPublic = function (privateKey) {
+const privateToPublic = exports.privateToPublic = function (privateKey) {
   privateKey = exports.toBuffer(privateKey)
   // skip the type flag and use the X, Y points
   return secp256k1.publicKeyCreate(privateKey, false).slice(1)
@@ -360,9 +360,9 @@ exports.importPublic = function (publicKey) {
  * @return {Object}
  */
 exports.ecsign = function (msgHash, privateKey) {
-  var sig = secp256k1.sign(msgHash, privateKey)
+  const sig = secp256k1.sign(msgHash, privateKey)
 
-  var ret = {}
+  const ret = {}
   ret.r = sig.signature.slice(0, 32)
   ret.s = sig.signature.slice(32, 64)
   ret.v = sig.recovery + 27
@@ -378,12 +378,12 @@ exports.ecsign = function (msgHash, privateKey) {
  * @return {Buffer} publicKey
  */
 exports.ecrecover = function (msgHash, v, r, s) {
-  var signature = Buffer.concat([exports.setLength(r, 32), exports.setLength(s, 32)], 64)
-  var recovery = v - 27
+  const signature = Buffer.concat([exports.setLength(r, 32), exports.setLength(s, 32)], 64)
+  const recovery = v - 27
   if (recovery !== 0 && recovery !== 1) {
     throw new Error('Invalid signature v value')
   }
-  var senderPubKey = secp256k1.recover(msgHash, signature, recovery)
+  const senderPubKey = secp256k1.recover(msgHash, signature, recovery)
   return secp256k1.publicKeyConvert(senderPubKey, false).slice(1)
 }
 
@@ -413,7 +413,7 @@ exports.fromRpcSig = function (sig) {
     throw new Error('Invalid signature length')
   }
 
-  var v = sig[64]
+  const v = sig[64]
   // support both versions of `vap_sign` responses
   if (v < 27) {
     v += 27
@@ -451,10 +451,10 @@ exports.isValidAddress = function (address) {
  */
 exports.toChecksumAddress = function (address) {
   address = exports.stripHexPrefix(address).toLowerCase()
-  var hash = exports.sha3(address).toString('hex')
-  var ret = '0x'
+  const hash = exports.sha3(address).toString('hex')
+  const ret = '0x'
 
-  for (var i = 0; i < address.length; i++) {
+  for (const i = 0; i < address.length; i++) {
     if (parseInt(hash[i], 16) >= 8) {
       ret += address[i].toUpperCase()
     } else {
@@ -489,7 +489,7 @@ exports.generateAddress = function (from, nonce) {
     // read the RLP documentation for an answer if you dare
     nonce = null
   } else {
-    nonce = new Buffer(nonce.toArray())
+    nonce = Buffer.alloc(nonce.toArray())
   }
 
   // Only take the lower 160bits of the hash
@@ -502,7 +502,7 @@ exports.generateAddress = function (from, nonce) {
  * @return {Boolean}
  */
 exports.isPrecompiled = function (address) {
-  var a = exports.unpad(address)
+  const a = exports.unpad(address)
   return a.length === 1 && a[0] > 0 && a[0] < 5
 }
 
@@ -595,8 +595,8 @@ exports.baToJSON = function (ba) {
   if (Buffer.isBuffer(ba)) {
     return '0x' + ba.toString('hex')
   } else if (ba instanceof Array) {
-    var array = []
-    for (var i = 0; i < ba.length; i++) {
+    const array = []
+    for (const i = 0; i < ba.length; i++) {
       array.push(exports.baToJSON(ba[i]))
     }
     return array
@@ -620,7 +620,7 @@ exports.defineProperties = function (self, fields, data) {
   // attach the `toJSON`
   self.toJSON = function (label) {
     if (label) {
-      var obj = {}
+      const obj = {}
       self._fields.forEach(function (field) {
         obj[field] = '0x' + self[field].toString('hex')
       })
@@ -642,7 +642,7 @@ exports.defineProperties = function (self, fields, data) {
       v = exports.toBuffer(v)
 
       if (v.toString('hex') === '00' && !field.allowZero) {
-        v = new Buffer([])
+        v = Buffer.alloc([])
       }
 
       if (field.allowLess && field.length) {
@@ -680,7 +680,7 @@ exports.defineProperties = function (self, fields, data) {
   // if the constuctor is passed data
   if (data) {
     if (typeof data === 'string') {
-      data = new Buffer(exports.stripHexPrefix(data), 'hex')
+      data = Buffer.from(exports.stripHexPrefix(data), 'hex')
     }
 
     if (Buffer.isBuffer(data)) {

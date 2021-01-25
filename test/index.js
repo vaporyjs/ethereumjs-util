@@ -89,17 +89,17 @@ describe('unpad a hex string', function () {
 
 describe('pad', function () {
   it('should left pad a Buffer', function () {
-    var buf = new Buffer([9, 9])
+    var buf = Buffer.alloc([9, 9])
     var padded = vapUtils.setLength(buf, 3)
     assert.equal(padded.toString('hex'), '000909')
   })
   it('should left truncate a Buffer', function () {
-    var buf = new Buffer([9, 0, 9])
+    var buf = Buffer.alloc([9, 0, 9])
     var padded = vapUtils.setLength(buf, 2)
     assert.equal(padded.toString('hex'), '0009')
   })
   it('should left pad a Buffer - alias', function () {
-    var buf = new Buffer([9, 9])
+    var buf = Buffer.alloc([9, 9])
     var padded = vapUtils.setLengthLeft(buf, 3)
     assert.equal(padded.toString('hex'), '000909')
   })
@@ -107,17 +107,17 @@ describe('pad', function () {
 
 describe('rpad', function () {
   it('should right pad a Buffer', function () {
-    var buf = new Buffer([9, 9])
+    var buf = Buffer.alloc([9, 9])
     var padded = vapUtils.setLength(buf, 3, true)
     assert.equal(padded.toString('hex'), '090900')
   })
   it('should right truncate a Buffer', function () {
-    var buf = new Buffer([9, 0, 9])
+    var buf = Buffer.alloc([9, 0, 9])
     var padded = vapUtils.setLength(buf, 2, true)
     assert.equal(padded.toString('hex'), '0900')
   })
   it('should right pad a Buffer - alias', function () {
-    var buf = new Buffer([9, 9])
+    var buf = Buffer.alloc([9, 9])
     var padded = vapUtils.setLengthRight(buf, 3)
     assert.equal(padded.toString('hex'), '090900')
   })
@@ -125,7 +125,7 @@ describe('rpad', function () {
 
 describe('bufferToHex', function () {
   it('should convert a buffer to hex', function () {
-    var buf = new Buffer('5b9ac8', 'hex')
+    var buf = Buffer.from('5b9ac8', 'hex')
     var hex = vapUtils.bufferToHex(buf)
     assert.equal(hex, '0x5b9ac8')
   })
@@ -149,20 +149,20 @@ describe('intToBuffer', function () {
 
 describe('bufferToInt', function () {
   it('should convert a int to hex', function () {
-    var buf = new Buffer('5b9ac8', 'hex')
+    var buf = Buffer.from('5b9ac8', 'hex')
     var i = vapUtils.bufferToInt(buf)
     assert.equal(i, 6003400)
-    assert.equal(vapUtils.bufferToInt(new Buffer([])), 0)
+    assert.equal(vapUtils.bufferToInt(Buffer.alloc([])), 0)
   })
   it('should convert empty input to 0', function () {
-    assert.equal(vapUtils.bufferToInt(new Buffer([])), 0)
+    assert.equal(vapUtils.bufferToInt(Buffer.alloc([])), 0)
   })
 })
 
 describe('fromSigned', function () {
   it('should convert an unsigned (negative) buffer to a singed number', function () {
     var neg = '-452312848583266388373324160190187140051835877600158453279131187530910662656'
-    var buf = new Buffer(32)
+    var buf = Buffer.alloc(32)
     buf.fill(0)
     buf[0] = 255
 
@@ -170,7 +170,7 @@ describe('fromSigned', function () {
   })
   it('should convert an unsigned (positive) buffer to a singed number', function () {
     var neg = '452312848583266388373324160190187140051835877600158453279131187530910662656'
-    var buf = new Buffer(32)
+    var buf = Buffer.alloc(32)
     buf.fill(0)
     buf[0] = 1
 
@@ -200,69 +200,69 @@ describe('isValidPrivate', function () {
   var SECP256K1_N = new vapUtils.BN('fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141', 16)
   it('should fail on short input', function () {
     var tmp = '0011223344'
-    assert.equal(vapUtils.isValidPrivate(new Buffer(tmp, 'hex')), false)
+    assert.equal(vapUtils.isValidPrivate(Buffer.from(tmp, 'hex')), false)
   })
   it('should fail on too big input', function () {
     var tmp = '3a443d8381a6798a70c6ff9304bdc8cb0163c23211d11628fae52ef9e0dca11a001cf066d56a8156fc201cd5df8a36ef694eecd258903fca7086c1fae7441e1d'
-    assert.equal(vapUtils.isValidPrivate(new Buffer(tmp, 'hex')), false)
+    assert.equal(vapUtils.isValidPrivate(Buffer.from(tmp, 'hex')), false)
   })
   it('should fail on invalid curve (zero)', function () {
     var tmp = '0000000000000000000000000000000000000000000000000000000000000000'
-    assert.equal(vapUtils.isValidPrivate(new Buffer(tmp, 'hex')), false)
+    assert.equal(vapUtils.isValidPrivate(Buffer.from(tmp, 'hex')), false)
   })
   it('should fail on invalid curve (== N)', function () {
     var tmp = SECP256K1_N.toString(16)
-    assert.equal(vapUtils.isValidPrivate(new Buffer(tmp, 'hex')), false)
+    assert.equal(vapUtils.isValidPrivate(Buffer.from(tmp, 'hex')), false)
   })
   it('should fail on invalid curve (>= N)', function () {
     var tmp = SECP256K1_N.addn(1).toString(16)
-    assert.equal(vapUtils.isValidPrivate(new Buffer(tmp, 'hex')), false)
+    assert.equal(vapUtils.isValidPrivate(Buffer.from(tmp, 'hex')), false)
   })
   it('should work otherwise (< N)', function () {
     var tmp = SECP256K1_N.subn(1).toString(16)
-    assert.equal(vapUtils.isValidPrivate(new Buffer(tmp, 'hex')), true)
+    assert.equal(vapUtils.isValidPrivate(Buffer.from(tmp, 'hex')), true)
   })
 })
 
 describe('isValidPublic', function () {
   it('should fail on too short input', function () {
     var pubKey = '3a443d8381a6798a70c6ff9304bdc8cb0163c23211d11628fae52ef9e0dca11a001cf066d56a8156fc201cd5df8a36ef694eecd258903fca7086c1fae744'
-    pubKey = new Buffer(pubKey, 'hex')
+    pubKey = Buffer.from(pubKey, 'hex')
     assert.equal(vapUtils.isValidPublic(pubKey), false)
   })
   it('should fail on too big input', function () {
     var pubKey = '3a443d8381a6798a70c6ff9304bdc8cb0163c23211d11628fae52ef9e0dca11a001cf066d56a8156fc201cd5df8a36ef694eecd258903fca7086c1fae7441e1d00'
-    pubKey = new Buffer(pubKey, 'hex')
+    pubKey = Buffer.from(pubKey, 'hex')
     assert.equal(vapUtils.isValidPublic(pubKey), false)
   })
   it('should fail on SEC1 key', function () {
     var pubKey = '043a443d8381a6798a70c6ff9304bdc8cb0163c23211d11628fae52ef9e0dca11a001cf066d56a8156fc201cd5df8a36ef694eecd258903fca7086c1fae7441e1d'
-    pubKey = new Buffer(pubKey, 'hex')
+    pubKey = Buffer.from(pubKey, 'hex')
     assert.equal(vapUtils.isValidPublic(pubKey), false)
   })
   it('shouldn\'t fail on SEC1 key with sanitize enabled', function () {
     var pubKey = '043a443d8381a6798a70c6ff9304bdc8cb0163c23211d11628fae52ef9e0dca11a001cf066d56a8156fc201cd5df8a36ef694eecd258903fca7086c1fae7441e1d'
-    pubKey = new Buffer(pubKey, 'hex')
+    pubKey = Buffer.from(pubKey, 'hex')
     assert.equal(vapUtils.isValidPublic(pubKey, true), true)
   })
   it('should fail with an invalid SEC1 public key', function () {
     var pubKey = '023a443d8381a6798a70c6ff9304bdc8cb0163c23211d11628fae52ef9e0dca11a001cf066d56a8156fc201cd5df8a36ef694eecd258903fca7086c1fae7441e1d'
-    pubKey = new Buffer(pubKey, 'hex')
+    pubKey = Buffer.from(pubKey, 'hex')
     assert.equal(vapUtils.isValidPublic(pubKey, true), false)
   })
   it('should work with compressed keys with sanitize enabled', function () {
     var pubKey = '033a443d8381a6798a70c6ff9304bdc8cb0163c23211d11628fae52ef9e0dca11a'
-    pubKey = new Buffer(pubKey, 'hex')
+    pubKey = Buffer.from(pubKey, 'hex')
     assert.equal(vapUtils.isValidPublic(pubKey, true), true)
   })
   it('should work with sanitize enabled', function () {
     var pubKey = '043a443d8381a6798a70c6ff9304bdc8cb0163c23211d11628fae52ef9e0dca11a001cf066d56a8156fc201cd5df8a36ef694eecd258903fca7086c1fae7441e1d'
-    pubKey = new Buffer(pubKey, 'hex')
+    pubKey = Buffer.from(pubKey, 'hex')
     assert.equal(vapUtils.isValidPublic(pubKey, true), true)
   })
   it('should work otherwise', function () {
     var pubKey = '3a443d8381a6798a70c6ff9304bdc8cb0163c23211d11628fae52ef9e0dca11a001cf066d56a8156fc201cd5df8a36ef694eecd258903fca7086c1fae7441e1d'
-    pubKey = new Buffer(pubKey, 'hex')
+    pubKey = Buffer.from(pubKey, 'hex')
     assert.equal(vapUtils.isValidPublic(pubKey), true)
   })
 })
@@ -271,15 +271,15 @@ describe('importPublic', function () {
   var pubKey = '3a443d8381a6798a70c6ff9304bdc8cb0163c23211d11628fae52ef9e0dca11a001cf066d56a8156fc201cd5df8a36ef694eecd258903fca7086c1fae7441e1d'
   it('should work with an Vapory public key', function () {
     var tmp = '3a443d8381a6798a70c6ff9304bdc8cb0163c23211d11628fae52ef9e0dca11a001cf066d56a8156fc201cd5df8a36ef694eecd258903fca7086c1fae7441e1d'
-    assert.equal(vapUtils.importPublic(new Buffer(tmp, 'hex')).toString('hex'), pubKey)
+    assert.equal(vapUtils.importPublic(Buffer.from(tmp, 'hex')).toString('hex'), pubKey)
   })
   it('should work with uncompressed SEC1 keys', function () {
     var tmp = '043a443d8381a6798a70c6ff9304bdc8cb0163c23211d11628fae52ef9e0dca11a001cf066d56a8156fc201cd5df8a36ef694eecd258903fca7086c1fae7441e1d'
-    assert.equal(vapUtils.importPublic(new Buffer(tmp, 'hex')).toString('hex'), pubKey)
+    assert.equal(vapUtils.importPublic(Buffer.from(tmp, 'hex')).toString('hex'), pubKey)
   })
   it('should work with compressed SEC1 keys', function () {
     var tmp = '033a443d8381a6798a70c6ff9304bdc8cb0163c23211d11628fae52ef9e0dca11a'
-    assert.equal(vapUtils.importPublic(new Buffer(tmp, 'hex')).toString('hex'), pubKey)
+    assert.equal(vapUtils.importPublic(Buffer.from(tmp, 'hex')).toString('hex'), pubKey)
   })
 })
 
@@ -287,27 +287,27 @@ describe('publicToAddress', function () {
   it('should produce an address given a public key', function () {
     var pubKey = '3a443d8381a6798a70c6ff9304bdc8cb0163c23211d11628fae52ef9e0dca11a001cf066d56a8156fc201cd5df8a36ef694eecd258903fca7086c1fae7441e1d'
     var address = '2f015c60e0be116b1f0cd534704db9c92118fb6a'
-    pubKey = new Buffer(pubKey, 'hex')
+    pubKey = Buffer.from(pubKey, 'hex')
     var r = vapUtils.publicToAddress(pubKey)
     assert.equal(r.toString('hex'), address)
   })
   it('should produce an address given a SEC1 public key', function () {
     var pubKey = '043a443d8381a6798a70c6ff9304bdc8cb0163c23211d11628fae52ef9e0dca11a001cf066d56a8156fc201cd5df8a36ef694eecd258903fca7086c1fae7441e1d'
     var address = '2f015c60e0be116b1f0cd534704db9c92118fb6a'
-    pubKey = new Buffer(pubKey, 'hex')
+    pubKey = Buffer.from(pubKey, 'hex')
     var r = vapUtils.publicToAddress(pubKey, true)
     assert.equal(r.toString('hex'), address)
   })
   it('shouldn\'t produce an address given an invalid SEC1 public key', function () {
     var pubKey = '023a443d8381a6798a70c6ff9304bdc8cb0163c23211d11628fae52ef9e0dca11a001cf066d56a8156fc201cd5df8a36ef694eecd258903fca7086c1fae7441e1d'
-    pubKey = new Buffer(pubKey, 'hex')
+    pubKey = Buffer.from(pubKey, 'hex')
     assert.throws(function () {
       vapUtils.publicToAddress(pubKey, true)
     })
   })
   it('shouldn\'t produce an address given an invalid public key', function () {
     var pubKey = '3a443d8381a6798a70c6ff9304bdc8cb0163c23211d11628fae52ef9e0dca11a001cf066d56a8156fc201cd5df8a36ef694eecd258903fca7086c1fae744'
-    pubKey = new Buffer(pubKey, 'hex')
+    pubKey = Buffer.from(pubKey, 'hex')
     assert.throws(function () {
       vapUtils.publicToAddress(pubKey)
     })
@@ -326,13 +326,13 @@ describe('publicToAddress 0x', function () {
 describe('privateToPublic', function () {
   it('should produce a public key given a private key', function () {
     var pubKey = '3a443d8381a6798a70c6ff9304bdc8cb0163c23211d11628fae52ef9e0dca11a001cf066d56a8156fc201cd5df8a36ef694eecd258903fca7086c1fae7441e1d'
-    var privateKey = new Buffer([234, 84, 189, 197, 45, 22, 63, 136, 201, 58, 176, 97, 87, 130, 207, 113, 138, 46, 251, 158, 81, 167, 152, 154, 171, 27, 8, 6, 126, 156, 28, 95])
+    var privateKey = Buffer.alloc([234, 84, 189, 197, 45, 22, 63, 136, 201, 58, 176, 97, 87, 130, 207, 113, 138, 46, 251, 158, 81, 167, 152, 154, 171, 27, 8, 6, 126, 156, 28, 95])
     var r = vapUtils.privateToPublic(privateKey).toString('hex')
     assert.equal(r.toString('hex'), pubKey)
   })
   it('shouldn\'t produce a public key given an invalid private key', function () {
-    var privateKey1 = new Buffer([234, 84, 189, 197, 45, 22, 63, 136, 201, 58, 176, 97, 87, 130, 207, 113, 138, 46, 251, 158, 81, 167, 152, 154, 171, 27, 8, 6, 126, 156, 28, 95, 42])
-    var privateKey2 = new Buffer([234, 84, 189, 197, 45, 22, 63, 136, 201, 58, 176, 97, 87, 130, 207, 113, 138, 46, 251, 158, 81, 167, 152, 154, 171, 27, 8, 6, 126, 156, 28])
+    var privateKey1 = Buffer.alloc([234, 84, 189, 197, 45, 22, 63, 136, 201, 58, 176, 97, 87, 130, 207, 113, 138, 46, 251, 158, 81, 167, 152, 154, 171, 27, 8, 6, 126, 156, 28, 95, 42])
+    var privateKey2 = Buffer.alloc([234, 84, 189, 197, 45, 22, 63, 136, 201, 58, 176, 97, 87, 130, 207, 113, 138, 46, 251, 158, 81, 167, 152, 154, 171, 27, 8, 6, 126, 156, 28])
     assert.throws(function () {
       vapUtils.privateToPublic(privateKey1)
     })
@@ -346,7 +346,7 @@ describe('privateToAddress', function () {
   it('should produce an address given a private key', function () {
     var address = '2f015c60e0be116b1f0cd534704db9c92118fb6a'
     // Our private key
-    var privateKey = new Buffer([234, 84, 189, 197, 45, 22, 63, 136, 201, 58, 176, 97, 87, 130, 207, 113, 138, 46, 251, 158, 81, 167, 152, 154, 171, 27, 8, 6, 126, 156, 28, 95])
+    var privateKey = Buffer.alloc([234, 84, 189, 197, 45, 22, 63, 136, 201, 58, 176, 97, 87, 130, 207, 113, 138, 46, 251, 158, 81, 167, 152, 154, 171, 27, 8, 6, 126, 156, 28, 95])
     var r = vapUtils.privateToAddress(privateKey).toString('hex')
     assert.equal(r.toString('hex'), address)
   })
@@ -400,22 +400,22 @@ describe('isPrecompiled', function () {
 describe('toBuffer', function () {
   it('should work', function () {
     // Buffer
-    assert.deepEqual(vapUtils.toBuffer(new Buffer([])), new Buffer([]))
+    assert.deepEqual(vapUtils.toBuffer(Buffer.alloc([])), Buffer.alloc([]))
     // Array
-    assert.deepEqual(vapUtils.toBuffer([]), new Buffer([]))
+    assert.deepEqual(vapUtils.toBuffer([]), Buffer.alloc([]))
     // String
-    assert.deepEqual(vapUtils.toBuffer('11'), new Buffer([49, 49]))
-    assert.deepEqual(vapUtils.toBuffer('0x11'), new Buffer([17]))
+    assert.deepEqual(vapUtils.toBuffer('11'), Buffer.alloc([49, 49]))
+    assert.deepEqual(vapUtils.toBuffer('0x11'), Buffer.alloc([17]))
     assert.deepEqual(vapUtils.toBuffer('1234').toString('hex'), '31323334')
     assert.deepEqual(vapUtils.toBuffer('0x1234').toString('hex'), '1234')
     // Number
-    assert.deepEqual(vapUtils.toBuffer(1), new Buffer([1]))
+    assert.deepEqual(vapUtils.toBuffer(1), Buffer.alloc([1]))
     // null
-    assert.deepEqual(vapUtils.toBuffer(null), new Buffer([]))
+    assert.deepEqual(vapUtils.toBuffer(null), Buffer.alloc([]))
     // undefined
-    assert.deepEqual(vapUtils.toBuffer(), new Buffer([]))
+    assert.deepEqual(vapUtils.toBuffer(), Buffer.alloc([]))
     // 'toArray'
-    assert.deepEqual(vapUtils.toBuffer(new BN(1)), new Buffer([1]))
+    assert.deepEqual(vapUtils.toBuffer(new BN(1)), Buffer.alloc([1]))
   })
   it('should fail', function () {
     assert.throws(function () {
@@ -426,50 +426,50 @@ describe('toBuffer', function () {
 
 describe('baToJSON', function () {
   it('should turn a array of buffers into a pure json object', function () {
-    var ba = [new Buffer([0]), new Buffer([1]), [new Buffer([2])]]
+    var ba = [Buffer.alloc([0]), Buffer.alloc([1]), [Buffer.alloc([2])]]
     assert.deepEqual(vapUtils.baToJSON(ba), ['0x00', '0x01', ['0x02']])
   })
   it('should turn a buffers into string', function () {
-    assert.deepEqual(vapUtils.baToJSON(new Buffer([0])), '0x00')
+    assert.deepEqual(vapUtils.baToJSON(Buffer.alloc([0])), '0x00')
   })
 })
 
-var echash = new Buffer('82ff40c0a986c6a5cfad4ddf4c3aa6996f1a7837f9c398e17e5de5cbd5a12b28', 'hex')
-var ecprivkey = new Buffer('3c9229289a6125f7fdf1885a77bb12c37a8d3b4962d936f7e3084dece32a3ca1', 'hex')
+var echash = Buffer.from('82ff40c0a986c6a5cfad4ddf4c3aa6996f1a7837f9c398e17e5de5cbd5a12b28', 'hex')
+var ecprivkey = Buffer.from('3c9229289a6125f7fdf1885a77bb12c37a8d3b4962d936f7e3084dece32a3ca1', 'hex')
 
 describe('ecsign', function () {
   it('should produce a signature', function () {
     var sig = vapUtils.ecsign(echash, ecprivkey)
-    assert.deepEqual(sig.r, new Buffer('99e71a99cb2270b8cac5254f9e99b6210c6c10224a1579cf389ef88b20a1abe9', 'hex'))
-    assert.deepEqual(sig.s, new Buffer('129ff05af364204442bdb53ab6f18a99ab48acc9326fa689f228040429e3ca66', 'hex'))
+    assert.deepEqual(sig.r, Buffer.from('99e71a99cb2270b8cac5254f9e99b6210c6c10224a1579cf389ef88b20a1abe9', 'hex'))
+    assert.deepEqual(sig.s, Buffer.from('129ff05af364204442bdb53ab6f18a99ab48acc9326fa689f228040429e3ca66', 'hex'))
     assert.equal(sig.v, 27)
   })
 })
 
 describe('ecrecover', function () {
   it('should recover a public key', function () {
-    var r = new Buffer('99e71a99cb2270b8cac5254f9e99b6210c6c10224a1579cf389ef88b20a1abe9', 'hex')
-    var s = new Buffer('129ff05af364204442bdb53ab6f18a99ab48acc9326fa689f228040429e3ca66', 'hex')
+    var r = Buffer.from('99e71a99cb2270b8cac5254f9e99b6210c6c10224a1579cf389ef88b20a1abe9', 'hex')
+    var s = Buffer.from('129ff05af364204442bdb53ab6f18a99ab48acc9326fa689f228040429e3ca66', 'hex')
     var pubkey = vapUtils.ecrecover(echash, 27, r, s)
     assert.deepEqual(pubkey, vapUtils.privateToPublic(ecprivkey))
   })
   it('should fail on an invalid signature (v = 21)', function () {
-    var r = new Buffer('99e71a99cb2270b8cac5254f9e99b6210c6c10224a1579cf389ef88b20a1abe9', 'hex')
-    var s = new Buffer('129ff05af364204442bdb53ab6f18a99ab48acc9326fa689f228040429e3ca66', 'hex')
+    var r = Buffer.from('99e71a99cb2270b8cac5254f9e99b6210c6c10224a1579cf389ef88b20a1abe9', 'hex')
+    var s = Buffer.from('129ff05af364204442bdb53ab6f18a99ab48acc9326fa689f228040429e3ca66', 'hex')
     assert.throws(function () {
       vapUtils.ecrecover(echash, 21, r, s)
     })
   })
   it('should fail on an invalid signature (v = 29)', function () {
-    var r = new Buffer('99e71a99cb2270b8cac5254f9e99b6210c6c10224a1579cf389ef88b20a1abe9', 'hex')
-    var s = new Buffer('129ff05af364204442bdb53ab6f18a99ab48acc9326fa689f228040429e3ca66', 'hex')
+    var r = Buffer.from('99e71a99cb2270b8cac5254f9e99b6210c6c10224a1579cf389ef88b20a1abe9', 'hex')
+    var s = Buffer.from('129ff05af364204442bdb53ab6f18a99ab48acc9326fa689f228040429e3ca66', 'hex')
     assert.throws(function () {
       vapUtils.ecrecover(echash, 29, r, s)
     })
   })
   it('should fail on an invalid signature (swapped points)', function () {
-    var r = new Buffer('99e71a99cb2270b8cac5254f9e99b6210c6c10224a1579cf389ef88b20a1abe9', 'hex')
-    var s = new Buffer('129ff05af364204442bdb53ab6f18a99ab48acc9326fa689f228040429e3ca66', 'hex')
+    var r = Buffer.from('99e71a99cb2270b8cac5254f9e99b6210c6c10224a1579cf389ef88b20a1abe9', 'hex')
+    var s = Buffer.from('129ff05af364204442bdb53ab6f18a99ab48acc9326fa689f228040429e3ca66', 'hex')
     assert.throws(function () {
       vapUtils.ecrecover(echash, 27, s, r)
     })
@@ -478,28 +478,28 @@ describe('ecrecover', function () {
 
 describe('isValidSignature', function () {
   it('should fail on an invalid signature (shorter r))', function () {
-    var r = new Buffer('99e71a99cb2270b8cac5254f9e99b6210c6c10224a1579cf389ef88b20a1ab', 'hex')
-    var s = new Buffer('129ff05af364204442bdb53ab6f18a99ab48acc9326fa689f228040429e3ca66', 'hex')
+    var r = Buffer.from('99e71a99cb2270b8cac5254f9e99b6210c6c10224a1579cf389ef88b20a1ab', 'hex')
+    var s = Buffer.from('129ff05af364204442bdb53ab6f18a99ab48acc9326fa689f228040429e3ca66', 'hex')
     assert.equal(vapUtils.isValidSignature(27, r, s), false)
   })
   it('should fail on an invalid signature (shorter s))', function () {
-    var r = new Buffer('99e71a99cb2270b8cac5254f9e99b6210c6c10224a1579cf389ef88b20a1abe9', 'hex')
-    var s = new Buffer('129ff05af364204442bdb53ab6f18a99ab48acc9326fa689f228040429e3ca', 'hex')
+    var r = Buffer.from('99e71a99cb2270b8cac5254f9e99b6210c6c10224a1579cf389ef88b20a1abe9', 'hex')
+    var s = Buffer.from('129ff05af364204442bdb53ab6f18a99ab48acc9326fa689f228040429e3ca', 'hex')
     assert.equal(vapUtils.isValidSignature(27, r, s), false)
   })
   it('should fail on an invalid signature (v = 21)', function () {
-    var r = new Buffer('99e71a99cb2270b8cac5254f9e99b6210c6c10224a1579cf389ef88b20a1abe9', 'hex')
-    var s = new Buffer('129ff05af364204442bdb53ab6f18a99ab48acc9326fa689f228040429e3ca66', 'hex')
+    var r = Buffer.from('99e71a99cb2270b8cac5254f9e99b6210c6c10224a1579cf389ef88b20a1abe9', 'hex')
+    var s = Buffer.from('129ff05af364204442bdb53ab6f18a99ab48acc9326fa689f228040429e3ca66', 'hex')
     assert.equal(vapUtils.isValidSignature(21, r, s), false)
   })
   it('should fail on an invalid signature (v = 29)', function () {
-    var r = new Buffer('99e71a99cb2270b8cac5254f9e99b6210c6c10224a1579cf389ef88b20a1abe9', 'hex')
-    var s = new Buffer('129ff05af364204442bdb53ab6f18a99ab48acc9326fa689f228040429e3ca66', 'hex')
+    var r = Buffer.from('99e71a99cb2270b8cac5254f9e99b6210c6c10224a1579cf389ef88b20a1abe9', 'hex')
+    var s = Buffer.from('129ff05af364204442bdb53ab6f18a99ab48acc9326fa689f228040429e3ca66', 'hex')
     assert.equal(vapUtils.isValidSignature(29, r, s), false)
   })
   it('should work otherwise', function () {
-    var r = new Buffer('99e71a99cb2270b8cac5254f9e99b6210c6c10224a1579cf389ef88b20a1abe9', 'hex')
-    var s = new Buffer('129ff05af364204442bdb53ab6f18a99ab48acc9326fa689f228040429e3ca66', 'hex')
+    var r = Buffer.from('99e71a99cb2270b8cac5254f9e99b6210c6c10224a1579cf389ef88b20a1abe9', 'hex')
+    var s = Buffer.from('129ff05af364204442bdb53ab6f18a99ab48acc9326fa689f228040429e3ca66', 'hex')
     assert.equal(vapUtils.isValidSignature(27, r, s), true)
   })
   // FIXME: add homestead test
@@ -553,8 +553,8 @@ describe('.isValidAddress()', function () {
 })
 
 describe('message sig', function () {
-  const r = new Buffer('99e71a99cb2270b8cac5254f9e99b6210c6c10224a1579cf389ef88b20a1abe9', 'hex')
-  const s = new Buffer('129ff05af364204442bdb53ab6f18a99ab48acc9326fa689f228040429e3ca66', 'hex')
+  const r = Buffer.from('99e71a99cb2270b8cac5254f9e99b6210c6c10224a1579cf389ef88b20a1abe9', 'hex')
+  const s = Buffer.from('129ff05af364204442bdb53ab6f18a99ab48acc9326fa689f228040429e3ca66', 'hex')
 
   it('should return hex strings that the RPC can use', function () {
     assert.equal(vapUtils.toRpcSig(27, r, s), '0x99e71a99cb2270b8cac5254f9e99b6210c6c10224a1579cf389ef88b20a1abe9129ff05af364204442bdb53ab6f18a99ab48acc9326fa689f228040429e3ca6600')

@@ -31,7 +31,7 @@ module.exports = function (config) {
           return ['Firefox']
         }
 
-        var browsers = ['Chrome', 'Firefox']
+        const browsers = ['Chrome', 'Firefox']
         return browsers.filter(function (browser) {
           return availableBrowser.indexOf(browser) !== -1
         })
