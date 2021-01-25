@@ -482,7 +482,7 @@ describe('ecrecover', function () {
 describe('hashPersonalMessage', function () {
   it('should produce a deterministic hash', function () {
     var h = vapUtils.hashPersonalMessage(Buffer.from('Hello world'))
-    assert.deepEqual(h, Buffer.from('8144a6fa26be252b86456491fbcd43c1de7e022241845ffea1c3df066f7cfede', 'hex'))
+    assert.deepEqual(h, Buffer.from('924fcabd57ae5a88fc10b651ddd51d40619a1e4562f1c9e006a6adb665c5b2e7', 'hex'))
   })
 })
 

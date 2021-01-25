@@ -1,5 +1,5 @@
-var assert = require('assert')
-var vapUtil = require('../index.js')
+const assert = require('assert')
+const vapUtil = require('../index.js')
 
 describe('define', function () {
   const fields = [{
@@ -27,9 +27,9 @@ describe('define', function () {
   }]
 
   it('should trim zeros', function () {
-    var someOb = {}
+    const someOb = {}
     vapUtil.defineProperties(someOb, fields)
-      // Define Properties
+    // Define Properties
     someOb.r = '0x00004'
     assert.equal(someOb.r.toString('hex'), '04')
 
@@ -38,7 +38,7 @@ describe('define', function () {
   })
 
   it('shouldn\'t allow wrong size for exact size requirements', function () {
-    var someOb = {}
+    const someOb = {}
     vapUtil.defineProperties(someOb, fields)
 
     assert.throws(function () {
@@ -53,15 +53,15 @@ describe('define', function () {
   })
 
   it('it should accept rlp encoded intial data', function () {
-    var someOb = {}
-    var data = {
+    const someOb = {}
+    const data = {
       aword: 'test',
       cannotBeZero: 'not zero',
       value: 'a value',
       r: 'rrr'
     }
 
-    var expected = {
+    const expected = {
       aword: '0x74657374',
       empty: '0x',
       cannotBeZero: '0x6e6f74207a65726f',
@@ -69,25 +69,25 @@ describe('define', function () {
       r: '0x727272'
     }
 
-    var expectedArray = [
+    const expectedArray = [
       '0x74657374', '0x', '0x6e6f74207a65726f', '0x612076616c7565', '0x727272'
     ]
 
     vapUtil.defineProperties(someOb, fields, data)
     assert.deepEqual(someOb.toJSON(true), expected, 'should produce the correctly labeled object')
 
-    var someOb2 = {}
-    var rlpEncoded = someOb.serialize().toString('hex')
+    const someOb2 = {}
+    const rlpEncoded = someOb.serialize().toString('hex')
     vapUtil.defineProperties(someOb2, fields, rlpEncoded)
     assert.equal(someOb2.serialize().toString('hex'), rlpEncoded, 'the constuctor should accept rlp encoded buffers')
 
-    var someOb3 = {}
+    const someOb3 = {}
     vapUtil.defineProperties(someOb3, fields, expectedArray)
     assert.deepEqual(someOb.toJSON(), expectedArray, 'should produce the correctly object')
   })
 
   it('it should not accept invalid values in the constuctor', function () {
-    var someOb = {}
+    const someOb = {}
     assert.throws(function () {
       vapUtil.defineProperties(someOb, fields, 5)
     }, 'should throw on nonsensical data')
@@ -98,8 +98,8 @@ describe('define', function () {
   })
 
   it('alias should work ', function () {
-    var someOb = {}
-    var data = {
+    const someOb = {}
+    const data = {
       aword: 'test',
       cannotBeZero: 'not zero',
       value: 'a value',
@@ -114,8 +114,8 @@ describe('define', function () {
   })
 
   it('alias should work #2', function () {
-    var someOb = {}
-    var data = { blah: '42' }
+    const someOb = {}
+    const data = { blah: '42' }
 
     vapUtil.defineProperties(someOb, fields, data)
     assert.equal(someOb.blah, '42')
