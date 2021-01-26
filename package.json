@@ -1,7 +1,7 @@
 {
-  "name": "ethereumjs-util",
+  "name": "vaporyjs-util",
   "version": "4.5.0",
-  "description": "a collection of utility functions for Ethereum",
+  "description": "a collection of utility functions for Vapory",
   "main": "index.js",
   "scripts": {
     "coverage": "istanbul cover _mocha",
@@ -15,10 +15,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ethereumjs/ethereumjs-util.git"
+    "url": "https://github.com/vaporyjs/vaporyjs-util.git"
   },
   "keywords": [
-    "ethereum",
+    "vapory",
     "utilties"
   ],
   "author": "mjbecze <mjbecze@gmail.com>",
@@ -27,14 +27,14 @@
   ],
   "license": "MPL-2.0",
   "bugs": {
-    "url": "https://github.com/ethereumjs/ethereumjs-util/issues"
+    "url": "https://github.com/vaporyjs/vaporyjs-util/issues"
   },
-  "homepage": "https://github.com/ethereumjs/ethereumjs-util",
+  "homepage": "https://github.com/vaporyjs/vaporyjs-util",
   "dependencies": {
     "bn.js": "^4.8.0",
     "create-hash": "^1.1.2",
     "keccakjs": "^0.2.0",
-    "rlp": "^2.0.0",
+    "@vaporyjs/rlp": "^2.0.0",
     "secp256k1": "^3.0.1"
   },
   "devDependencies": {
