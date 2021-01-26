@@ -1,5 +1,6 @@
 {
   "name": "vaporyjs-util",
+  "namespace": "vaporyjs",
   "version": "4.5.0",
   "description": "a collection of utility functions for Vapory",
   "main": "index.js",
