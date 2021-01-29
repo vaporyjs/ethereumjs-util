@@ -302,7 +302,7 @@ exports.isValidPrivate = function (privateKey) {
 exports.isValidPublic = function (publicKey, sanitize) {
   if (publicKey.length === 64) {
     // Convert to SEC1 for secp256k1
-    return secp256k1.publicKeyVerify(Buffer.concat([ Buffer.alloc([4]), publicKey ]))
+    return secp256k1.publicKeyVerify(Buffer.concat([Buffer.alloc([4]), publicKey]))
   }
 
   if (!sanitize) {
@@ -397,7 +397,7 @@ exports.ecrecover = function (msgHash, v, r, s) {
 exports.toRpcSig = function (v, r, s) {
   // gvap (and the RPC vap_sign method) uses the 65 byte format used by Bitcoin
   // FIXME: this might change in the future - https://github.com/vaporyco/go-vapory/issues/2053
-  return exports.bufferToHex(Buffer.concat([ r, s, exports.toBuffer(v - 27) ]))
+  return exports.bufferToHex(Buffer.concat([r, s, exports.toBuffer(v - 27)]))
 }
 
 /**
